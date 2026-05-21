@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuiz Sains Tahun 6 - Interaktif</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Header Utama -->
+    <header class="w-full max-w-4xl text-center my-4">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 tracking-tight drop-shadow-sm">
+            <i class="fa-solid fa-flask-vial mr-2 text-blue-600"></i>KUIZ INTERAKTIF SAINS TAHUN 6
+        </h1>
+        <p class="text-blue-700 mt-2 font-medium">Topik: Manusia, Mikroorganisma & Interaksi Antara Hidupan</p>
+    </header>
+
+    <!-- Kandungan Utama (Dynamic Container) -->
+    <main class="w-full max-w-4xl flex-grow flex items-center justify-center my-4">
+        
+        <!-- SKRIN 1: PENDAFTARAN MURID -->
+        <div id="screen-register" class="w-full glass-card rounded-2xl p-6 md:p-10 shadow-xl max-w-lg transition-all duration-300">
+            <div class="text-center mb-6">
+                <span class="inline-block p-4 bg-blue-100 rounded-full text-blue-600 text-3xl mb-3">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </span>
+                <h2 class="text-2xl font-bold text-gray-800">Sila Isi Butiran Anda</h2>
+                <p class="text-gray-500 text-sm mt-1">Maklumat ini akan dihantar terus ke Telegram Guru untuk rekod pemarkahan.</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2" for="student-name">
+                        <i class="fa-solid fa-id-badge mr-2 text-blue-500"></i>Nama Penuh Murid
+                    </label>
+                    <input type="text" id="student-name" placeholder="Contoh: MUHAMMAD AMIN BIN ALI" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition uppercase font-semibold text-gray-700">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2" for="student-class">
+                        <i class="fa-solid fa-school mr-2 text-blue-500"></i>Nama Kelas
+                    </label>
+                    <input type="text" id="student-class" placeholder="Contoh: 6 GEMILANG" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition uppercase font-semibold text-gray-700">
+                </div>
+
+                <div class="pt-4">
+                    <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-indigo-700 active:scale-95 transition shadow-lg text-lg flex items-center justify-center gap-2">
+                        Mula Kuiz Sekarang <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKRIN 2: PERMAINAN KUIZ -->
+        <div id="screen-quiz" class="w-full glass-card rounded-2xl p-5 md:p-8 shadow-xl hidden transition-all duration-300">
+            <!-- Info Bar Atas -->
+            <div class="flex flex-col sm:flex-row justify-between items-center border-b border-gray-200 pb-4 mb-6 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="px-3 py-1.5 bg-blue-100 text-blue-800 font-bold rounded-lg text-sm">
+                        Soalan <span id="current-question-num">1</span> / 50
+                    </div>
+                    <div class="px-3 py-1.5 bg-indigo-100 text-indigo-800 font-semibold rounded-lg text-xs" id="topic-badge">
+                        Topik
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full sm:w-48 bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                    <div id="progress-bar-fill" class="bg-blue-600 h-2.5 transition-all duration-300" style="width: 2%"></div>
+                </div>
+                <!-- Timer Kuiz -->
+                <div class="flex items-center gap-2 text-gray-700 font-bold">
+                    <i class="fa-regular fa-clock text-blue-600 text-lg"></i>
+                    <span id="quiz-timer">00:00</span>
+                </div>
+            </div>
+
+            <!-- Kad Soalan -->
+            <div class="mb-6">
+                <h3 id="question-text" class="text-lg md:text-xl font-bold text-gray-800 leading-relaxed">
+                    Mengapakah jantung manusia sangat penting dalam proses hidup?
+                </h3>
+            </div>
+
+            <!-- Pilihan Jawapan -->
+            <div id="options-container" class="space-y-3">
+                <!-- Dijana Dinamik menggunakan JS -->
+            </div>
+
+            <!-- Navigation Bar Bawah -->
+            <div class="flex justify-between items-center mt-8 pt-4 border-t border-gray-200">
+                <button id="btn-prev" onclick="prevQuestion()" class="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg disabled:opacity-50 disabled:pointer-events-none transition">
+                    <i class="fa-solid fa-chevron-left"></i> Kembali
+                </button>
+                <button id="btn-next" onclick="nextQuestion()" class="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-md">
+                    Seterusnya <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SKRIN 3: KEPUTUSAN KUIZ -->
+        <div id="screen-result" class="w-full glass-card rounded-2xl p-6 md:p-10 shadow-xl max-w-2xl hidden text-center transition-all duration-300">
+            <span class="inline-block p-5 bg-yellow-100 rounded-full text-yellow-500 text-4xl mb-4">
+                <i class="fa-solid fa-trophy"></i>
+            </span>
+            <h2 class="text-3xl font-extrabold text-gray-800">Tahniah! Anda Selesai</h2>
+            <p class="text-gray-500 mt-1">Kuiz 50 soalan telah dijawab sepenuhnya.</p>
+            
+            <!-- Ringkasan Markah -->
+            <div class="my-8 bg-blue-50 rounded-xl p-6 max-w-md mx-auto border border-blue-100">
+                <p class="text-gray-600 font-medium">Keputusan Markah Anda</p>
+                <div class="text-5xl font-extrabold text-blue-600 my-2" id="result-score-percent">0%</div>
+                <p class="text-gray-700 font-semibold" id="result-score-text">0 / 50 Jawapan Betul</p>
+                <p class="text-sm text-gray-500 mt-2">Masa Menjawab: <span id="result-time-taken">0 minit</span></p>
+            </div>
+
+            <!-- Status Telegram Bot -->
+            <div id="telegram-status" class="mb-8 p-4 rounded-xl flex items-center justify-center gap-3">
+                <i class="fa-solid fa-spinner fa-spin text-blue-600 text-xl" id="status-icon"></i>
+                <span id="status-text" class="font-semibold text-gray-700">Sedang menghantar keputusan ke Telegram Guru...</span>
+            </div>
+
+            <!-- Butang Tindakan -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="reviewAnswers()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-eye"></i> Semak Jawapan
+                </button>
+                <button onclick="restartQuiz()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Ambil Semula Kuiz
+                </button>
+            </div>
+        </div>
+
+        <!-- SKRIN 4: SEMAK JAWAPAN (ULASAN) -->
+        <div id="screen-review" class="w-full glass-card rounded-2xl p-5 md:p-8 shadow-xl hidden transition-all duration-300">
+            <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-6">
+                <h3 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-clipboard-list mr-2 text-indigo-500"></i>Ulasan Jawapan</h3>
+                <button onclick="backToResult()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg transition">
+                    Tutup Ulasan
+                </button>
+            </div>
+
+            <!-- Senarai Soalan Semakan -->
+            <div id="review-list" class="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+                <!-- Dijana Dinamik menggunakan JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center text-xs text-blue-800 font-semibold mt-4 py-2 border-t border-blue-200">
+        &copy; 2026 Kuiz Sains Interaktif Tahun 6 | Dihantar automatik ke Telegram Guru.
+    </footer>
+
+    <!-- KOD JS UTAMA -->
+    <script>
+        // CONFIGURATION TELEGRAM (Menggunakan maklumat yang diberikan oleh pengguna)
+        const TELEGRAM_BOT_TOKEN = "8825456874:AAGb3Owl7HNJ1m0rP5fkMJnsQDKFkn8rj3I";
+        const TELEGRAM_CHAT_ID = "6087514961";
+
+        // DATA SOALAN (50 SOALAN TAHUN 6)
+        const questions = [
+            // --- TOPIK 1: MANUSIA (1-17) ---
+            {
+                id: 1,
+                topic: "Manusia",
+                question: "Apakah organ pembiakan lelaki yang berfungsi menghasilkan sel sperma?",
+                options: ["Zakar", "Testis", "Uretra", "Pundi kencing"],
+                answer: 1 // Indeks 1 = Testis
+            },
+            {
+                id: 2,
+                topic: "Manusia",
+                question: "Apakah organ pembiakan perempuan yang menghasilkan sel ovum?",
+                options: ["Uterus", "Vagina", "Ovari", "Tiub Fallopio"],
+                answer: 2
+            },
+            {
+                id: 3,
+                topic: "Manusia",
+                question: "Di manakah proses persenyawaan (percantuman antara sperma dan ovum) berlaku?",
+                options: ["Uterus", "Tiub Fallopio", "Ovari", "Vagina"],
+                answer: 1
+            },
+            {
+                id: 4,
+                topic: "Manusia",
+                question: "Di bahagian manakah di dalam sistem pembiakan perempuan tempat embrio akan menempel dan membesar?",
+                options: ["Ovari", "Tiub Fallopio", "Uterus", "Vagina"],
+                answer: 2
+            },
+            {
+                id: 5,
+                topic: "Manusia",
+                question: "Berapakah anggaran tempoh kehamilan yang normal bagi seseorang manusia?",
+                options: ["6 bulan", "9 bulan", "12 bulan", "5 bulan"],
+                answer: 1
+            },
+            {
+                id: 6,
+                topic: "Manusia",
+                question: "Sistem manakah di dalam tubuh manusia yang mengawal, menerima maklumat, dan menyelaraskan gerak balas badan?",
+                options: ["Sistem Saraf", "Sistem Pencernaan", "Sistem Rangka", "Sistem Peredaran Darah"],
+                answer: 0
+            },
+            {
+                id: 7,
+                topic: "Manusia",
+                question: "Apakah dua komponen utama yang membentuk sistem saraf pusat?",
+                options: ["Otak dan Jantung", "Otak dan Saraf Tunjang", "Saraf Tunjang dan Saraf Periferi", "Jantung dan Peparu"],
+                answer: 1
+            },
+            {
+                id: 8,
+                topic: "Manusia",
+                question: "Apakah fungsi utama sistem saraf periferi?",
+                options: ["Melindungi otak daripada kecederaan", "Menghasilkan cecair tulang belakang", "Menghubungkan sistem saraf pusat kepada organ deria dan otot seluruh badan", "Mengawal degupan jantung secara tidak sedar"],
+                answer: 2
+            },
+            {
+                id: 9,
+                topic: "Manusia",
+                question: "Tindakan refleks ialah gerak balas pantas tanpa berfikir panjang. Organ manakah yang mengawal tindakan refleks ini secara langsung?",
+                options: ["Otak", "Saraf Tunjang", "Kulit", "Mata"],
+                answer: 1
+            },
+            {
+                id: 10,
+                topic: "Manusia",
+                question: "Manakah antara berikut merupakan contoh tindakan refleks?",
+                options: ["Membaca buku sains dengan teliti", "Menarik tangan dengan laju apabila tersentuh cerek panas", "Mengayuh basikal di jalan raya", "Menghafal sifir matematik"],
+                answer: 1
+            },
+            {
+                id: 11,
+                topic: "Manusia",
+                question: "Apakah struktur tulang yang melindungi organ otak daripada tercedera sekiranya terjatuh?",
+                options: ["Tulang rusuk", "Tulang selangka", "Tulang tengkorak", "Tulang belakang"],
+                answer: 2
+            },
+            {
+                id: 12,
+                topic: "Manusia",
+                question: "Mengapakah kecederaan yang teruk pada saraf tunjang boleh menyebabkan seseorang itu lumpuh?",
+                options: ["Otak tidak lagi mampu menghasilkan sel darah", "Rantaian tulang belakang menjadi reput", "Isyarat arahan dari otak tidak dapat dihantar ke anggota badan", "Otot badan mengecut serta-merta"],
+                answer: 2
+            },
+            {
+                id: 13,
+                topic: "Manusia",
+                question: "Manakah antara tabiat buruk berikut yang boleh merosakkan fungsi sistem saraf manusia secara langsung?",
+                options: ["Minum air kosong berlebihan", "Menyalahgunakan dadah dan meminum minuman beralkohol", "Tidur di dalam bilik yang gelap", "Melakukan aktiviti fizikal berintensiti tinggi"],
+                answer: 1
+            },
+            {
+                id: 14,
+                topic: "Manusia",
+                question: "Bagaimanakah pemakaian topi keledar yang betul semasa menunggang motosikal dapat menjaga sistem saraf kita?",
+                options: ["Mengurangkan impak kerosakan kulit muka", "Melindungi bahagian kepala dan otak daripada hentaman kuat", "Mengelakkan daripada disaman pihak berkuasa", "Membantu menstabilkan kedudukan telinga semasa laju"],
+                answer: 1
+            },
+            {
+                id: 15,
+                topic: "Manusia",
+                question: "Apakah nutrisi penting yang diperlukan oleh badan bagi memelihara kekuatan dan kesihatan sistem saraf?",
+                options: ["Vitamin C", "Vitamin B Kompleks", "Zat Besi", "Lemak Tepu"],
+                answer: 1
+            },
+            {
+                id: 16,
+                topic: "Manusia",
+                question: "Apakah urutan perkembangan janin bermula dari persenyawaan yang betul?",
+                options: ["Zigot -> Embrio -> Janin", "Embrio -> Zigot -> Janin", "Janin -> Embrio -> Zigot", "Zigot -> Janin -> Embrio"],
+                answer: 0
+            },
+            {
+                id: 17,
+                topic: "Manusia",
+                question: "Bagaimanakah kandungan (janin) di dalam perut ibu menerima nutrien dan oksigen?",
+                options: ["Telinga janin", "Tali pusat dan plasenta", "Mulut bayi secara terus", "Kulit perut ibu"],
+                answer: 1
+            },
+            // --- TOPIK 2: MIKROORGANISMA (18-33) ---
+            {
+                id: 18,
+                topic: "Mikroorganisma",
+                question: "Apakah maksud sebenar bagi 'mikroorganisma'?",
+                options: [
+                    "Kumpulan serangga yang merayap di kawasan semak samun",
+                    "Hidupan seni yang tidak dapat dilihat dengan mata kasar tetapi boleh dilihat melalui mikroskop",
+                    "Sel mati yang terapung-apung di udara",
+                    "Tumbuhan herba yang sangat kecil"
+                ],
+                answer: 1
+            },
+            {
+                id: 19,
+                topic: "Mikroorganisma",
+                question: "Berikut merupakan lima kumpulan utama mikroorganisma KECUALI...",
+                options: ["Fungi", "Bakteria", "Serangga", "Protozoa"],
+                answer: 2
+            },
+            {
+                id: 20,
+                topic: "Mikroorganisma",
+                question: "Mikroorganisma yang paling halus dan hanya boleh diperhatikan menggunakan mikroskop elektron ialah...",
+                options: ["Alga", "Virus", "Bakteria", "Fungi"],
+                answer: 1
+            },
+            {
+                id: 21,
+                topic: "Mikroorganisma",
+                question: "Ameba dan Paramesium merupakan contoh mikroorganisma yang dikategorikan dalam kumpulan...",
+                options: ["Bakteria", "Protozoa", "Virus", "Alga"],
+                answer: 1
+            },
+            {
+                id: 22,
+                topic: "Mikroorganisma",
+                question: "Kulat roti (Mukor) dan yis tergolong dalam kumpulan mikroorganisma jenis...",
+                options: ["Fungi", "Bakteria", "Alga", "Protozoa"],
+                answer: 0
+            },
+            {
+                id: 23,
+                topic: "Mikroorganisma",
+                question: "Mengapakah kumpulan Alga (seperti Spirogyra) dianggap unik dan mempunyai ciri seperti tumbuhan?",
+                options: ["Alga boleh menghasilkan spora", "Alga mempunyai klorofil dan boleh menjalankan fotosintesis", "Alga tidak memerlukan air untuk hidup", "Alga boleh membesar dengan cepat di tempat gelap"],
+                answer: 1
+            },
+            {
+                id: 24,
+                topic: "Mikroorganisma",
+                question: "Adonan roti didapati mengembang setelah dimasukkan yis dan air suam. Apakah proses hidup mikroorganisma yang terbukti melalui situasi ini?",
+                options: ["Bertumbuh", "Membiak", "Bernafas", "Bergerak"],
+                answer: 2
+            },
+            {
+                id: 25,
+                topic: "Mikroorganisma",
+                question: "Tompok-tompok hijau kehitaman didapati mula memenuhi permukaan roti yang terbiar lama. Ini membuktikan bahawa mikroorganisma itu...",
+                options: ["Bernafas", "Bergerak", "Bertumbuh dan membiak", "Menghasilkan udara"],
+                answer: 2
+            },
+            {
+                id: 26,
+                topic: "Mikroorganisma",
+                question: "Manakah antara berikut merupakan kombinasi faktor-faktor yang diperlukan untuk mikroorganisma bertumbuh?",
+                options: [
+                    "Suhu panas ekstrem, garam tinggi, plastik",
+                    "Udara, air, nutrien, suhu sesuai, keasidan sesuai",
+                    "Cahaya matahari terik, ais, tanah liat",
+                    "Angin kuat, kelembapan sifar, minyak"
+                ],
+                answer: 1
+            },
+            {
+                id: 27,
+                topic: "Mikroorganisma",
+                question: "Mengapakah sayur-sayuran atau lauk-pauk yang disimpan di dalam peti sejuk tidak cepat rosak?",
+                options: [
+                    "Suhu sejuk membunuh semua mikroorganisma dalam masa 1 jam",
+                    "Peti sejuk tidak mengandungi sebarang oksigen",
+                    "Suhu yang sangat rendah melambatkan aktiviti dan pertumbuhan mikroorganisma",
+                    "Cahaya di dalam peti sejuk menghalang pembiakan bakteria"
+                ],
+                answer: 2
+            },
+            {
+                id: 28,
+                topic: "Mikroorganisma",
+                question: "Apakah fungsi mikroorganisma jenis Yis dalam industri pembuatan makanan harian?",
+                options: ["Mengawet kek sayuran", "Membantu menaikkan adunan roti dan donat", "Mematikan kuman berbahaya pada buah", "Memberikan rasa manis semulajadi"],
+                answer: 1
+            },
+            {
+                id: 29,
+                topic: "Mikroorganisma",
+                question: "Bakteria jenis apakah yang digunakan secara meluas untuk menukarkan susu kepada yogurt dan keju?",
+                options: ["Salmonella", "E. Coli", "Lactobacillus", "Penicillium"],
+                answer: 2
+            },
+            {
+                id: 30,
+                topic: "Mikroorganisma",
+                question: "Apakah nama bahan ubat yang diperbuat daripada kulat Penicillium bagi membunuh atau menghalang jangkitan bakteria berbahaya?",
+                options: ["Antibiotik", "Vaksin", "Antiseptik", "Paracetamol"],
+                answer: 0
+            },
+            {
+                id: 31,
+                topic: "Mikroorganisma",
+                question: "Antara penyakit berjangkit berikut, yang manakah disebabkan oleh jangkitan sejenis virus?",
+                options: ["Kurap", "Influenza dan COVID-19", "Keracunan makanan", "Panau"],
+                answer: 1
+            },
+            {
+                id: 32,
+                topic: "Mikroorganisma",
+                question: "Apakah tindakan yang paling berkesan untuk menghalang penularan bakteria selepas pulang dari tandas awam?",
+                options: ["Mengelap tangan pada pakaian sahaja", "Membasuh tangan dengan bersih menggunakan sabun dan air mengalir", "Memegang objek sekeliling untuk mengeringkan kulit", "Menyembur minyak wangi ke tangan"],
+                answer: 1
+            },
+            {
+                id: 33,
+                topic: "Mikroorganisma",
+                question: "Mengapakah kita perlu memakai pelitup muka semasa mengalami batuk atau selesema di tempat awam?",
+                options: [
+                    "Supaya wajah kelihatan bersih",
+                    "Bagi menyekat titisan cecair pernafasan yang mengandungi virus/bakteria daripada tersebar ke udara",
+                    "Untuk memastikan suhu badan sentiasa stabil",
+                    "Untuk menukar suara menjadi lebih jelas"
+                ],
+                answer: 1
+            },
+            // --- TOPIK 3: INTERAKSI ANTARA HIDUPAN (34-50) ---
+            {
+                id: 34,
+                topic: "Interaksi Antara Hidupan",
+                question: "Apakah takrifan yang paling tepat bagi 'interaksi antara hidupan'?",
+                options: [
+                    "Cara manusia bercakap dengan haiwan belaan",
+                    "Hubungan aktif yang berlaku sesama spesies atau spesies berbeza untuk kelangsungan hidup",
+                    "Pertarungan fizikal haiwan liar di zoo",
+                    "Proses penyerapan air oleh akar tumbuhan"
+                ],
+                answer: 1
+            },
+            {
+                id: 35,
+                topic: "Interaksi Antara Hidupan",
+                question: "Interaksi yang membawa maksud 'hidup bersama' bagi dua spesies yang berbeza dikenali sebagai...",
+                options: ["Simbiosis", "Pemongsaan", "Penguraian", "Persaingan"],
+                answer: 0
+            },
+            {
+                id: 36,
+                topic: "Interaksi Antara Hidupan",
+                question: "Apakah tiga jenis hubungan simbiosis yang wujud antara hidupan?",
+                options: [
+                    "Intraspesies, Interspesies, Ekosistem",
+                    "Mutualisme, Komensalisme, Parasitisme",
+                    "Pemongsaan, Persaingan, Penguraian",
+                    "Pengeluar, Pengguna, Pengurai"
+                ],
+                answer: 1
+            },
+            {
+                id: 37,
+                topic: "Interaksi Antara Hidupan",
+                question: "Hubungan simbiosis yang memberikan faedah atau KEUNTUNGAN kepada KEDUA-DUA belah pihak dinamakan...",
+                options: ["Komensalisme", "Parasitisme", "Mutualisme", "Pemongsaan"],
+                answer: 2
+            },
+            {
+                id: 38,
+                topic: "Interaksi Antara Hidupan",
+                question: "Manakah pasangan hidupan berikut yang menunjukkan hubungan MUTUALISME?",
+                options: [
+                    "Burung gembala kerbau dan kerbau",
+                    "Kucing dan sengkenit (kutu)",
+                    "Ikan remora dan ikan jerung",
+                    "Pokok dedalu dan pokok mangga"
+                ],
+                answer: 0
+            },
+            {
+                id: 39,
+                topic: "Interaksi Antara Hidupan",
+                question: "Ikan remora menumpang berenang berhampiran ikan jerung untuk memakan sisa makanannya. Ikan jerung pula tidak terjejas dan tidak rugi. Apakah jenis hubungan ini?",
+                options: ["Mutualisme", "Komensalisme", "Parasitisme", "Pemongsaan"],
+                answer: 1
+            },
+            {
+                id: 40,
+                topic: "Interaksi Antara Hidupan",
+                question: "Pokok paku pakis langsuir yang tumbuh menumpang di atas dahan pokok gergasi di hutan dikategorikan sebagai simbiosis...",
+                options: ["Parasitisme", "Mutualisme", "Komensalisme", "Persaingan"],
+                answer: 2
+            },
+            {
+                id: 41,
+                topic: "Interaksi Antara Hidupan",
+                question: "Apakah kesan daripada interaksi PARASITISME?",
+                options: [
+                    "Kedua-dua pihak mendapat keuntungan",
+                    "Satu pihak untung, manakala satu pihak lagi (perumah) mendapat kerugian atau bahaya",
+                    "Kedua-dua pihak langsung tidak untung atau rugi",
+                    "Salah satu pihak akan bertukar menjadi spesies baharu"
+                ],
+                answer: 1
+            },
+            {
+                id: 42,
+                topic: "Interaksi Antara Hidupan",
+                question: "Sengkenit (kutu) menghisap darah pada badan kucing. Kucing pula kehilangan darah dan merasa gatal yang teruk. Apakah nama hubungan ini?",
+                options: ["Komensalisme", "Mutualisme", "Parasitisme", "Kerjasama"],
+                answer: 2
+            },
+            {
+                id: 43,
+                topic: "Interaksi Antara Hidupan",
+                question: "Apakah maksud persaingan INTRASPESIES?",
+                options: [
+                    "Persaingan antara haiwan yang berbeza spesies",
+                    "Persaingan antara hidupan daripada spesies yang sama",
+                    "Persaingan antara haiwan dan tumbuhan sahaja",
+                    "Persaingan antara kulat dan bakteria"
+                ],
+                answer: 1
+            },
+            {
+                id: 44,
+                topic: "Interaksi Antara Hidupan",
+                question: "Dua ekor singa jantan berlawan dengan sangat sengit. Apakah perkara utama yang mungkin sedang disaingkan oleh mereka?",
+                options: ["Baja tanah dan air kolam", "Kawasan jajahan/wilayah dan pasangan", "Cahaya matahari", "Sarang burung terbiar"],
+                answer: 1
+            },
+            {
+                id: 45,
+                topic: "Interaksi Antara Hidupan",
+                question: "Antara faktor berikut, yang manakah merupakan faktor persaingan haiwan INTRASPESIES?",
+                options: [
+                    "Makanan, air, kawasan/tempat tinggal, dan pasangan",
+                    "Udara segar, baja tanah, kelajuan angin",
+                    "Cahaya matahari, karbon dioksida, pasu",
+                    "Bahan mineral, keasidan air, pokok"
+                ],
+                answer: 0
+            },
+            {
+                id: 46,
+                topic: "Interaksi Antara Hidupan",
+                question: "Apakah faktor yang TIDAK DISAINGKAN dalam persaingan INTERSPESIES (antara spesies yang berbeza)?**",
+                options: ["Makanan", "Air", "Pasangan", "Kawasan/Tempat tinggal"],
+                answer: 2
+            },
+            {
+                id: 47,
+                topic: "Interaksi Antara Hidupan",
+                question: "Apakah kebaikan haiwan yang hidup secara berkumpulan (seperti gajah atau dubuk)?",
+                options: [
+                    "Meningkatkan persaingan makanan sesama sendiri",
+                    "Memudahkan penyakit berjangkit merebak",
+                    "Memudahkan mereka membina sarang, mencari makanan, dan melindungi diri daripada musuh",
+                    "Menyukarkan proses mencari pasangan"
+                ],
+                answer: 2
+            },
+            {
+                id: 48,
+                topic: "Interaksi Antara Hidupan",
+                question: "Antara haiwan berikut, yang manakah hidup secara SOLITARI (bersendirian)?",
+                options: ["Gajah", "Harimau", "Anai-anai", "Serigala"],
+                answer: 1
+            },
+            {
+                id: 49,
+                topic: "Interaksi Antara Hidupan",
+                question: "Apakah empat faktor persaingan utama bagi spesies tumbuhan di dalam sesebuah hutan?",
+                options: [
+                    "Makanan, air, pasangan, dan perlindungan",
+                    "Cahaya matahari, air, ruang, dan nutrien tanah",
+                    "Karbon dioksida, pasu besar, angin, dan serangga",
+                    "Suhu udara, keasidan tanah, racun serangga, dan baja"
+                ],
+                answer: 1
+            },
+            {
+                id: 50,
+                topic: "Interaksi Antara Hidupan",
+                question: "Di dalam sebuah kawasan hutan tebal, pokok-pokok tumbuh melangit, sangat tinggi, dan mempunyai dahan yang lurus ke atas. Keadaan ini menunjukkan pokok tersebut sedang bersaing hebat untuk mendapatkan...",
+                options: ["Suhu dingin", "Cahaya matahari", "Nutrien di kawasan luar hutan", "Debu tanah"],
+                answer: 1
+            }
+        ];
+
+        // STATE APLIKASI
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let studentName = "";
+        let studentClass = "";
+        let startTime = null;
+        let timerInterval = null;
+
+        // FUNGSI 1: MULA KUIZ
+        function startQuiz() {
+            const nameInput = document.getElementById("student-name").value.trim();
+            const classInput = document.getElementById("student-class").value.trim();
+
+            if (nameInput === "" || classInput === "") {
+                alert("Sila isi Nama Penuh dan Kelas anda terlebih dahulu sebelum memula kuiz!");
+                return;
+            }
+
+            studentName = nameInput.toUpperCase();
+            studentClass = classInput.toUpperCase();
+
+            // Pindah skrin
+            document.getElementById("screen-register").classList.add("hidden");
+            document.getElementById("screen-quiz").classList.remove("hidden");
+
+            // Mula pemasaan
+            startTime = new Date();
+            startTimer();
+
+            // Papar soalan pertama
+            showQuestion();
+        }
+
+        // FUNGSI 2: TIMER
+        function startTimer() {
+            const timerDisplay = document.getElementById("quiz-timer");
+            timerInterval = setInterval(() => {
+                const now = new Date();
+                const diff = now - startTime;
+                const minutes = Math.floor(diff / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                timerDisplay.textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // FUNGSI 3: PAPAR SOALAN
+        function showQuestion() {
+            const currentQ = questions[currentQuestionIndex];
+            
+            // Set maklumat teks soalan
+            document.getElementById("current-question-num").textContent = currentQuestionIndex + 1;
+            document.getElementById("topic-badge").textContent = currentQ.topic;
+            document.getElementById("question-text").textContent = currentQ.question;
+
+            // Set Progress Bar
+            const percent = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById("progress-bar-fill").style.width = `${percent}%`;
+
+            // Bina senarai pilihan jawapan
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            currentQ.options.forEach((option, index) => {
+                const isSelected = userAnswers[currentQuestionIndex] === index;
+                
+                const btn = document.createElement("button");
+                btn.className = `w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-between text-base ${
+                    isSelected 
+                    ? "border-blue-600 bg-blue-50 text-blue-900 font-semibold shadow-inner" 
+                    : "border-gray-200 hover:border-blue-400 hover:bg-gray-50 text-gray-700"
+                }`;
+                btn.onclick = () => selectOption(index);
+
+                // Tambah label pilihan (A, B, C, D)
+                const labels = ["A", "B", "C", "D"];
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                            isSelected ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-500"
+                        }">${labels[index]}</span>
+                        <span>${option}</span>
+                    </div>
+                    ${isSelected ? '<i class="fa-solid fa-circle-check text-blue-600"></i>' : '<i class="fa-regular fa-circle text-gray-300"></i>'}
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Kemas kini butang Navigation bawah
+            const btnPrev = document.getElementById("btn-prev");
+            const btnNext = document.getElementById("btn-next");
+
+            if (currentQuestionIndex === 0) {
+                btnPrev.disabled = true;
+            } else {
+                btnPrev.disabled = false;
+            }
+
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerHTML = `Hantar <i class="fa-solid fa-paper-plane ml-1"></i>`;
+                btnNext.className = "flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition shadow-md";
+            } else {
+                btnNext.innerHTML = `Seterusnya <i class="fa-solid fa-chevron-right"></i>`;
+                btnNext.className = "flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-md";
+            }
+        }
+
+        // FUNGSI 4: PILIH JAWAPAN
+        function selectOption(index) {
+            userAnswers[currentQuestionIndex] = index;
+            showQuestion(); // redraw soalan untuk tunjuk aktif
+        }
+
+        // FUNGSI 5: NAVIGASI SOALAN
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            // Semak jika soalan semasa belum dijawab
+            if (userAnswers[currentQuestionIndex] === null) {
+                alert("Sila pilih satu jawapan sebelum meneruskan.");
+                return;
+            }
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                // Selesai kuiz (Hantar Jawapan)
+                finishQuiz();
+            }
+        }
+
+        // FUNGSI 6: SELESAIKAN KUIZ & KIRA MARKAH
+        function finishQuiz() {
+            clearInterval(timerInterval);
+
+            // Kira Markah Betul
+            let correctCount = 0;
+            questions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const percent = ((correctCount / questions.length) * 100).toFixed(0);
+
+            // Tempoh masa taken
+            const timeDiff = new Date() - startTime;
+            const minutes = Math.floor(timeDiff / 60000);
+            const seconds = Math.floor((timeDiff % 60000) / 1000);
+            const timeTakenStr = `${minutes} minit ${seconds} saat`;
+
+            // Papar keputusan di skrin
+            document.getElementById("result-score-percent").textContent = `${percent}%`;
+            document.getElementById("result-score-text").textContent = `${correctCount} / ${questions.length} Jawapan Betul`;
+            document.getElementById("result-time-taken").textContent = timeTakenStr;
+
+            // Tukar Skrin ke Keputusan
+            document.getElementById("screen-quiz").classList.add("hidden");
+            document.getElementById("screen-result").classList.remove("hidden");
+
+            // Hantar ke Telegram
+            sendToTelegram(correctCount, percent, timeTakenStr);
+        }
+
+        // FUNGSI 7: HANTAR DATA KE API TELEGRAM
+        function sendToTelegram(score, percent, timeTaken) {
+            const statusBox = document.getElementById("telegram-status");
+            const statusIcon = document.getElementById("status-icon");
+            const statusText = document.getElementById("status-text");
+
+            statusBox.className = "mb-8 p-4 rounded-xl flex items-center justify-center gap-3 bg-yellow-50 border border-yellow-200 text-yellow-800";
+            statusText.textContent = "Sedang menghantar keputusan anda ke Telegram Guru...";
+
+            // Bina text mesej yang cantik dan kemas
+            const message = `📊 *KEPUTUSAN KUIZ SAINS TAHUN 6*\n` +
+                            `--------------------------------------\n` +
+                            `👤 *Nama Murid :* ${studentName}\n` +
+                            `🏫 *Kelas :* ${studentClass}\n` +
+                            `💯 *Markah :* ${score} / ${questions.length} (*${percent}%*)\n` +
+                            `⏱️ *Masa Menjawab :* ${timeTaken}\n` +
+                            `📅 *Tarikh/Masa :* ${new Date().toLocaleString("ms-MY", { timeZone: "Asia/Kuala_Lumpur" })}\n` +
+                            `--------------------------------------`;
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: "Markdown"
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    statusBox.className = "mb-8 p-4 rounded-xl flex items-center justify-center gap-3 bg-green-50 border border-green-200 text-green-800";
+                    statusIcon.className = "fa-solid fa-circle-check text-green-600 text-xl";
+                    statusText.textContent = "Keputusan berjaya dihantar ke Telegram Guru!";
+                } else {
+                    throw new Error("Ralat respons API");
+                }
+            })
+            .catch(error => {
+                console.error("Ralat Penghantaran Telegram:", error);
+                statusBox.className = "mb-8 p-4 rounded-xl flex items-center justify-center gap-3 bg-red-50 border border-red-200 text-red-800";
+                statusIcon.className = "fa-solid fa-triangle-exclamation text-red-600 text-xl";
+                statusText.textContent = "Gagal hantar ke Telegram. Pastikan sambungan internet stabil.";
+            });
+        }
+
+        // FUNGSI 8: SEMAK SEMUA JAWAPAN (REVIEW)
+        function reviewAnswers() {
+            document.getElementById("screen-result").classList.add("hidden");
+            document.getElementById("screen-review").classList.remove("hidden");
+
+            const reviewList = document.getElementById("review-list");
+            reviewList.innerHTML = "";
+
+            questions.forEach((q, idx) => {
+                const userAnsIndex = userAnswers[idx];
+                const isCorrect = userAnsIndex === q.answer;
+
+                const card = document.createElement("div");
+                card.className = `p-5 rounded-xl border-2 ${
+                    isCorrect ? "bg-green-50/50 border-green-200" : "bg-red-50/50 border-red-200"
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="w-7 h-7 mt-0.5 rounded-full flex items-center justify-center text-sm font-bold ${
+                            isCorrect ? "bg-green-600 text-white" : "bg-red-600 text-white"
+                        }">
+                            ${idx + 1}
+                        </span>
+                        <div class="flex-1">
+                            <p class="font-bold text-gray-800">${q.question}</p>
+                            <div class="mt-3 space-y-1.5 text-sm">
+                                <p class="text-gray-600">Jawapan Anda: <span class="font-bold ${isCorrect ? "text-green-700" : "text-red-700"}">${q.options[userAnsIndex] || "Tiada"}</span></p>
+                                ${!isCorrect ? `<p class="text-green-800 font-semibold">Jawapan Sebenar: ${q.options[q.answer]}</p>` : ""}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                reviewList.appendChild(card);
+            });
+        }
+
+        function backToResult() {
+            document.getElementById("screen-review").classList.add("hidden");
+            document.getElementById("screen-result").classList.remove("hidden");
+        }
+
+        // FUNGSI 9: ULANG KUIZ
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            document.getElementById("student-name").value = "";
+            document.getElementById("student-class").value = "";
+
+            document.getElementById("screen-result").classList.add("hidden");
+            document.getElementById("screen-register").classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>
